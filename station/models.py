@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Q
+from django.utils import timezone
 
 
 class Station(models.Model):
@@ -52,3 +54,22 @@ class Train(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CrewMember(models.Model):
+    first_name = models.CharField(max_length=63)
+    last_name = models.CharField(max_length=63)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+class Trip(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="trips")
+    train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name="trips")
+    crew = models.ManyToManyField(CrewMember, related_name="trips")
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.departure_time} | {self.route} | {self.train}"
