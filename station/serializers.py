@@ -91,6 +91,11 @@ class TripListSerializer(TripSerializer):
         return str(trip.route)
 
 
+class TripTicketSerializer(TripListSerializer):
+    class Meta(TripSerializer.Meta):
+        fields = ("id", "route", "train", "departure_time", "arrival_time",)
+
+
 class TripDetailSerializer(TripSerializer):
     route = RouteListSerializer(read_only=True)
     train = TrainListSerializer(read_only=True)
