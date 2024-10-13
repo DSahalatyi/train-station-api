@@ -1,3 +1,4 @@
+from django.db.models import F, Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 
@@ -84,11 +85,12 @@ class TripViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
 
         if self.action in ("list", "retrieve"):
-            queryset = queryset.select_related(
-                "route__source",
-                "route__destination",
-                "train",
-            ).prefetch_related("crew")
+            queryset = queryset.select_related().prefetch_related("crew")
+
+        if self.action == "list":
+            queryset = queryset.annotate(
+                places_available=F("train__car_num") * F("train__places_in_car") - Count("tickets")
+            )
 
         return queryset
 

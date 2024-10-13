@@ -2,9 +2,10 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import SerializerMethodField
+from rest_framework.fields import SerializerMethodField, IntegerField
 from rest_framework.relations import SlugRelatedField
 
+from order.models import Ticket
 from station.models import Station, Route, TrainType, Train, CrewMember, Trip
 
 
@@ -70,7 +71,7 @@ class CrewMemberListSerializer(CrewMemberSerializer):
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
-        fields = "__all__"
+        fields = ("id", "route", "train", "crew", "departure_time", "arrival_time")
 
     def validate(self, attrs):
         departure_time = attrs.get("departure_time")
@@ -115,6 +116,10 @@ class TripListSerializer(TripSerializer):
     route = SerializerMethodField(read_only=True)
     train = SlugRelatedField(read_only=True, slug_field="name")
     crew = SlugRelatedField(many=True, read_only=True, slug_field="full_name")
+    places_available = IntegerField(read_only=True)
+
+    class Meta(TripSerializer.Meta):
+        fields = TripSerializer.Meta.fields + ("places_available",)
 
     def get_route(self, trip):
         return str(trip.route)
@@ -131,7 +136,17 @@ class TripTicketSerializer(TripListSerializer):
         )
 
 
+class TripCarPlacesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ("car", "place")
+
+
 class TripDetailSerializer(TripSerializer):
     route = RouteListSerializer(read_only=True)
     train = TrainListSerializer(read_only=True)
     crew = CrewMemberListSerializer(many=True, read_only=True)
+    taken_places = TripCarPlacesSerializer(many=True, read_only=True, source="tickets")
+
+    class Meta(TripSerializer.Meta):
+        fields = TripSerializer.Meta.fields + ("taken_places",)
