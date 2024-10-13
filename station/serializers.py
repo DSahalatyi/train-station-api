@@ -18,11 +18,9 @@ class RouteSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, attrs):
-        source = attrs.get("source")
-        destination = attrs.get("destination")
-
-        if source == destination:
-            raise ValidationError("Source and destination should be different")
+        Route.validate_source_destination(
+            attrs["source"], attrs["destination"], ValidationError
+        )
         return super().validate(attrs)
 
 
@@ -93,7 +91,13 @@ class TripListSerializer(TripSerializer):
 
 class TripTicketSerializer(TripListSerializer):
     class Meta(TripSerializer.Meta):
-        fields = ("id", "route", "train", "departure_time", "arrival_time",)
+        fields = (
+            "id",
+            "route",
+            "train",
+            "departure_time",
+            "arrival_time",
+        )
 
 
 class TripDetailSerializer(TripSerializer):

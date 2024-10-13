@@ -21,13 +21,6 @@ class Route(models.Model):
     )
     distance = models.IntegerField()
 
-    def __str__(self):
-        return f"{self.source.name} - {self.destination.name} ({str(self.distance)} km)"
-
-    def clean(self):
-        if self.source == self.destination:
-            raise ValidationError("Source and destination should be different")
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -35,6 +28,17 @@ class Route(models.Model):
                 name="unique_route",
             )
         ]
+
+    @staticmethod
+    def validate_source_destination(source, destination, error_to_raise):
+        if source == destination:
+            raise error_to_raise("Source and destination should be different")
+
+    def __str__(self):
+        return f"{self.source.name} - {self.destination.name} ({str(self.distance)} km)"
+
+    def clean(self):
+        self.validate_source_destination(self.source, self.destination, ValidationError)
 
 
 class TrainType(models.Model):
@@ -48,7 +52,9 @@ class Train(models.Model):
     name = models.CharField(max_length=63, unique=True)
     car_num = models.IntegerField(validators=[MinValueValidator(1)])
     places_in_car = models.IntegerField(validators=[MinValueValidator(1)])
-    train_type = models.ForeignKey(TrainType, on_delete=models.CASCADE, related_name="trains")
+    train_type = models.ForeignKey(
+        TrainType, on_delete=models.CASCADE, related_name="trains"
+    )
 
     def __str__(self):
         return self.name
