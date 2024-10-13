@@ -11,6 +11,9 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.user} | {self.created_at}"
+
 
 class Ticket(models.Model):
     car = IntegerField(validators=[MinValueValidator(1)])
@@ -24,6 +27,9 @@ class Ticket(models.Model):
                 fields=["car", "place", "trip"], name="unique_ticket"
             )
         ]
+
+    def __str__(self):
+        return f"{self.trip} - (car - {self.car}, place - {self.place})"
 
     def clean(self):
         self.validate_place_car(
