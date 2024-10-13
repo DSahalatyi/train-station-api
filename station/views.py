@@ -4,6 +4,7 @@ from rest_framework import viewsets
 
 from station.filters import TripFilter
 from station.models import Route, Station, Train, CrewMember, Trip
+from station.pagination import TripPagination
 from station.serializers import (
     RouteSerializer,
     RouteListSerializer,
@@ -78,6 +79,7 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+    pagination_class = TripPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TripFilter
 
