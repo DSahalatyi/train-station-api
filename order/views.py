@@ -1,15 +1,18 @@
-from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
 from order.models import Order
+from order.schemas.orders import orders_viewset_schema
 from order.serializers import (
     OrderSerializer,
     OrderListSerializer,
 )
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+@orders_viewset_schema
+class OrderViewSet(
+    viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin
+):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticated,)
