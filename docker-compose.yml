@@ -13,17 +13,40 @@ services:
       - media:/files/media
     depends_on:
       - db
+    networks:
+      - train_station_app_network
 
   db:
     image: postgres:17.0-alpine3.20
     restart: always
+    container_name: train-station-db
     env_file:
       - .env
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - train_station_app_network
 
+  redis:
+    image: "redis:alpine"
+    restart: always
+    container_name: movie-web-app-redis
+    depends_on:
+      - web
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - train_station_app_network
+
+
+networks:
+  train_station_app_network:
+    driver: bridge
 
 volumes:
   postgres_data: {}
