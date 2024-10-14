@@ -1,6 +1,6 @@
 from django.db.models import F, Count
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -8,6 +8,11 @@ from rest_framework.response import Response
 from station.filters import TripFilter
 from station.models import Route, Station, Train, CrewMember, Trip
 from station.pagination import TripPagination
+from station.schemas.crew_members import crew_members_viewset_schema
+from station.schemas.routes import routes_viewset_schema
+from station.schemas.stations import stations_viewset_schema
+from station.schemas.trains import trains_viewset_schema
+from station.schemas.trips import trips_viewset_schema
 from station.serializers import (
     RouteSerializer,
     RouteListSerializer,
@@ -19,16 +24,25 @@ from station.serializers import (
     CrewMemberSerializer,
     TripSerializer,
     TripListSerializer,
-    TripDetailSerializer, CrewMemberListSerializer, CrewMemberImageSerializer, CrewMemberDetailSerializer,
+    TripDetailSerializer,
+    CrewMemberListSerializer,
+    CrewMemberImageSerializer,
+    CrewMemberDetailSerializer,
 )
 
 
-class StationViewSet(viewsets.ModelViewSet):
+@stations_viewset_schema
+class StationViewSet(
+    viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin
+):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
 
 
-class RouteViewSet(viewsets.ModelViewSet):
+@routes_viewset_schema
+class RouteViewSet(
+    viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin
+):
     queryset = Route.objects.all()
     serializer_class = RouteSerializer
 
@@ -51,7 +65,10 @@ class RouteViewSet(viewsets.ModelViewSet):
         return serializer
 
 
-class TrainViewSet(viewsets.ModelViewSet):
+@trains_viewset_schema
+class TrainViewSet(
+    viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin
+):
     queryset = Train.objects.all()
     serializer_class = TrainSerializer
 
@@ -74,6 +91,7 @@ class TrainViewSet(viewsets.ModelViewSet):
         return serializer
 
 
+@crew_members_viewset_schema
 class CrewMemberViewSet(viewsets.ModelViewSet):
     queryset = CrewMember.objects.all()
     serializer_class = CrewMemberSerializer
@@ -96,7 +114,7 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
         methods=["post"],
         detail=True,
         permission_classes=[IsAdminUser],
-        url_path="upload-image"
+        url_path="upload-image",
     )
     def upload_image(self, request, pk=None):
         crew_member = self.get_object()
@@ -106,6 +124,7 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@trips_viewset_schema
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
@@ -121,7 +140,8 @@ class TripViewSet(viewsets.ModelViewSet):
 
         if self.action == "list":
             queryset = queryset.annotate(
-                places_available=F("train__car_num") * F("train__places_in_car") - Count("tickets")
+                places_available=F("train__car_num") * F("train__places_in_car")
+                - Count("tickets")
             )
 
         return queryset
