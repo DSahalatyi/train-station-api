@@ -2,9 +2,12 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+
+from user.schemas.jwt import jwt_view_schema
 
 
+@jwt_view_schema
 class CustomTokenObtainPairView(TokenObtainPairView):
     LOGIN_FAILURES_TIME = 180  # seconds
 
@@ -34,3 +37,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
+
+
+@jwt_view_schema
+class TokenRefreshViewWithTag(TokenRefreshView):
+    pass
+
+
+@jwt_view_schema
+class TokenVerifyViewWithTag(TokenVerifyView):
+    pass
