@@ -1,6 +1,10 @@
 from django.urls import path
 
-from user.jwt_views import CustomTokenObtainPairView, TokenRefreshViewWithTag, TokenVerifyViewWithTag
+from user.jwt_views import (
+    CustomTokenObtainPairView,
+    TokenRefreshViewWithTag,
+    TokenVerifyViewWithTag,
+)
 from user.views import CreateUserView, ManageUserView
 
 app_name = "user"

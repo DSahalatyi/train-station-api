@@ -11,8 +11,8 @@ class LoginFailRateThrottle(BaseThrottle):
     def allow_request(self, request, view):
         ip = self.get_ident(request)
 
-        fail_key = f'login_fail_{ip}'
-        block_key = f'login_block_{ip}'
+        fail_key = f"login_fail_{ip}"
+        block_key = f"login_block_{ip}"
 
         if cache.get(block_key):
             return False
@@ -21,7 +21,9 @@ class LoginFailRateThrottle(BaseThrottle):
 
         if login_failures >= self.INCORRECT_LOGIN_TRIES:
             cache.set(block_key, True, self.LOGIN_FAILURES_BLOCK_TIME)
-            user_blocked_signal.send(sender=self.__class__, ip=ip, block_time=self.LOGIN_FAILURES_BLOCK_TIME)
+            user_blocked_signal.send(
+                sender=self.__class__, ip=ip, block_time=self.LOGIN_FAILURES_BLOCK_TIME
+            )
             return False
 
         return True

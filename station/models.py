@@ -65,8 +65,9 @@ class Train(models.Model):
 
 
 def get_image_path(instance, filename):
-    filename=(
-        f"{slugify(instance.full_name)}-{uuid.uuid4()}.jpg" + pathlib.Path(filename).suffix
+    filename = (
+        f"{slugify(instance.full_name)}-{uuid.uuid4()}.jpg"
+        + pathlib.Path(filename).suffix
     )
     return pathlib.Path("upload/crew/") / pathlib.Path(filename)
 

@@ -2,7 +2,13 @@ from django.urls import include, path
 from rest_framework import routers
 
 from order.views import OrderViewSet
-from station.views import RouteViewSet, StationViewSet, TrainViewSet, CrewMemberViewSet, TripViewSet
+from station.views import (
+    RouteViewSet,
+    StationViewSet,
+    TrainViewSet,
+    CrewMemberViewSet,
+    TripViewSet,
+)
 
 app_name = "station"
 

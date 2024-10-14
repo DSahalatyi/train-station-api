@@ -8,5 +8,5 @@ stations_viewset_schema = extend_schema_view(
     create=extend_schema(
         tags=["Station"],
         description="Add a new station",
-    )
+    ),
 )

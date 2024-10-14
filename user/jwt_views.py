@@ -2,7 +2,11 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from user.schemas.jwt import jwt_view_schema
 
@@ -15,7 +19,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         serializer = self.get_serializer(data=request.data)
 
         ip = self._get_ip_from_request(request)
-        cache_key = f'login_fail_{ip}'
+        cache_key = f"login_fail_{ip}"
 
         try:
             serializer.is_valid(raise_exception=True)
@@ -31,11 +35,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
     @staticmethod
     def _get_ip_from_request(request):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
+            ip = x_forwarded_for.split(",")[0]
         else:
-            ip = request.META.get('REMOTE_ADDR')
+            ip = request.META.get("REMOTE_ADDR")
         return ip
 
 

@@ -10,9 +10,7 @@ class TripFilter(django_filters.FilterSet):
     to = django_filters.CharFilter(
         field_name="route__destination__name", lookup_expr="iexact"
     )
-    date = django_filters.DateFilter(
-        field_name="departure_time", lookup_expr="date"
-    )
+    date = django_filters.DateFilter(field_name="departure_time", lookup_expr="date")
 
     class Meta:
         model = Trip

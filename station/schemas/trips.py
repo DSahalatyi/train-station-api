@@ -26,7 +26,7 @@ trips_viewset_schema = extend_schema_view(
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.QUERY,
                 description="Filter trips by date of departure. Date format: YYYY-MM-DD "
-                            "Example: ?date=2024-01-01",
+                "Example: ?date=2024-01-01",
                 required=False,
             ),
         ],
