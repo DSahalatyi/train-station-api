@@ -31,7 +31,7 @@ class Route(models.Model):
     destination = models.ForeignKey(
         Station, on_delete=models.RESTRICT, related_name="destination_routes"
     )
-    distance = models.IntegerField()
+    distance = models.IntegerField(validators=[MinValueValidator(1)])
 
     class Meta:
         constraints = [
@@ -74,7 +74,7 @@ class Train(models.Model):
 
 def get_image_path(instance, filename):
     filename = (
-        f"{slugify(instance.full_name)}-{uuid.uuid4()}.jpg"
+        f"{slugify(instance.full_name)}-{uuid.uuid4()}"
         + pathlib.Path(filename).suffix
     )
     return pathlib.Path("upload/crew/") / pathlib.Path(filename)

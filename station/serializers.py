@@ -91,10 +91,14 @@ class TripSerializer(serializers.ModelSerializer):
         train = attrs.get("train")
 
         if departure_time < timezone.now():
-            raise ValidationError("Departure time must be in the future")
+            raise ValidationError(
+                {"departure_time": "Departure time must be in the future"}
+            )
 
         if arrival_time < departure_time:
-            raise ValidationError("Arrival time must be after the departure time")
+            raise ValidationError(
+                {"arrival_time": "Arrival time must be after the departure time"}
+            )
 
         overlapping_trips = Trip.objects.filter(
             Q(departure_time__lt=arrival_time, arrival_time__gt=departure_time)
@@ -103,13 +107,15 @@ class TripSerializer(serializers.ModelSerializer):
         for crew_member in crew_members:
             if overlapping_trips.filter(crew=crew_member).exists():
                 raise ValidationError(
-                    f"Crew member {crew_member} is already assigned to another trip during this time."
+                    {
+                        "crew": f"Crew member {crew_member} is already assigned to another trip during this time."
+                    }
                 )
 
         if overlapping_trips.filter(train=train).exists():
-            raise ValidationError(
-                f"Train {train} is already assigned to another train during this time."
-            )
+            raise ValidationError({
+                "train": f"Train {train} is already assigned to another train during this time."
+            })
 
         return super().validate(attrs)
 
