@@ -43,6 +43,18 @@ services:
     networks:
       - train_station_app_network
 
+  redis-admin:
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "8081:8081"
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - train_station_app_network
+
 
 networks:
   train_station_app_network:
