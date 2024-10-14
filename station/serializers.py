@@ -63,9 +63,20 @@ class CrewMemberSerializer(serializers.ModelSerializer):
         fields = ("id", "first_name", "last_name")
 
 
+class CrewMemberImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CrewMember
+        fields = ("id", "image")
+
+
 class CrewMemberListSerializer(CrewMemberSerializer):
     class Meta(CrewMemberSerializer.Meta):
-        fields = ("id", "full_name")
+        fields = ("id", "full_name", "image")
+
+
+class CrewMemberDetailSerializer(CrewMemberSerializer):
+    class Meta(CrewMemberSerializer.Meta):
+        fields = CrewMemberSerializer.Meta.fields + ("image",)
 
 
 class TripSerializer(serializers.ModelSerializer):

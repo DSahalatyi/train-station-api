@@ -1,6 +1,10 @@
+import pathlib
+import uuid
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils.text import slugify
 
 
 class Station(models.Model):
@@ -60,9 +64,17 @@ class Train(models.Model):
         return self.name
 
 
+def get_image_path(instance, filename):
+    filename=(
+        f"{slugify(instance.full_name)}-{uuid.uuid4()}.jpg" + pathlib.Path(filename).suffix
+    )
+    return pathlib.Path("upload/crew/") / pathlib.Path(filename)
+
+
 class CrewMember(models.Model):
     first_name = models.CharField(max_length=63)
     last_name = models.CharField(max_length=63)
+    image = models.ImageField(null=True, upload_to=get_image_path)
 
     @property
     def full_name(self):

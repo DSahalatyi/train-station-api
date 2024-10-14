@@ -1,6 +1,9 @@
 from django.db.models import F, Count
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
 
 from station.filters import TripFilter
 from station.models import Route, Station, Train, CrewMember, Trip
@@ -16,7 +19,7 @@ from station.serializers import (
     CrewMemberSerializer,
     TripSerializer,
     TripListSerializer,
-    TripDetailSerializer,
+    TripDetailSerializer, CrewMemberListSerializer, CrewMemberImageSerializer, CrewMemberDetailSerializer,
 )
 
 
@@ -74,6 +77,33 @@ class TrainViewSet(viewsets.ModelViewSet):
 class CrewMemberViewSet(viewsets.ModelViewSet):
     queryset = CrewMember.objects.all()
     serializer_class = CrewMemberSerializer
+
+    def get_serializer_class(self):
+        serializer = self.serializer_class
+
+        if self.action == "list":
+            serializer = CrewMemberListSerializer
+
+        if self.action == "retrieve":
+            serializer = CrewMemberDetailSerializer
+
+        if self.action == "upload_image":
+            serializer = CrewMemberImageSerializer
+
+        return serializer
+
+    @action(
+        methods=["post"],
+        detail=True,
+        permission_classes=[IsAdminUser],
+        url_path="upload-image"
+    )
+    def upload_image(self, request, pk=None):
+        crew_member = self.get_object()
+        serializer = self.get_serializer(crew_member, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TripViewSet(viewsets.ModelViewSet):
