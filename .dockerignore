@@ -1,0 +1,6 @@
+.venv
+.idea
+.gitignore
+.git
+__pychage__
+db.sqlite3
