@@ -13,10 +13,10 @@ class Station(models.Model):
     longitude = models.FloatField()
 
     class Meta:
+        ordering = ("name",)
         constraints = [
             models.UniqueConstraint(
-                fields=["latitude", "longitude"],
-                name="unique_coordinates"
+                fields=["latitude", "longitude"], name="unique_coordinates"
             )
         ]
 
@@ -34,6 +34,7 @@ class Route(models.Model):
     distance = models.IntegerField(validators=[MinValueValidator(1)])
 
     class Meta:
+        ordering = ("id",)
         constraints = [
             models.UniqueConstraint(
                 fields=("source", "destination"),
@@ -56,6 +57,9 @@ class Route(models.Model):
 class TrainType(models.Model):
     name = models.CharField(max_length=63, unique=True)
 
+    class Meta:
+        ordering = ("name",)
+
     def __str__(self):
         return self.name
 
@@ -68,14 +72,16 @@ class Train(models.Model):
         TrainType, on_delete=models.CASCADE, related_name="trains"
     )
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
 
 def get_image_path(instance, filename):
     filename = (
-        f"{slugify(instance.full_name)}-{uuid.uuid4()}"
-        + pathlib.Path(filename).suffix
+        f"{slugify(instance.full_name)}-{uuid.uuid4()}" + pathlib.Path(filename).suffix
     )
     return pathlib.Path("upload/crew/") / pathlib.Path(filename)
 
@@ -84,6 +90,9 @@ class CrewMember(models.Model):
     first_name = models.CharField(max_length=63)
     last_name = models.CharField(max_length=63)
     image = models.ImageField(null=True, upload_to=get_image_path)
+
+    class Meta:
+        ordering = ("last_name", "first_name",)
 
     @property
     def full_name(self):
@@ -99,6 +108,9 @@ class Trip(models.Model):
     crew = models.ManyToManyField(CrewMember, related_name="trips")
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
+
+    class Meta:
+        ordering = ("id",)
 
     def __str__(self):
         return f"{self.departure_time} | {self.route} | {self.train}"
