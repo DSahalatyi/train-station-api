@@ -22,7 +22,7 @@ class RouteSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         Route.validate_source_destination(
-            attrs["source"], attrs["destination"], ValidationError
+            attrs.get["source"], attrs.get["destination"], ValidationError
         )
         return super().validate(attrs)
 
