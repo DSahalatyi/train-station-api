@@ -46,3 +46,9 @@ set REDIS_CACHE=1
 set REDIS_HOST=<your redis host>
 set REDIS_PASSWORD=<your redis password>
 ```
+
+## Testing
+You can populate the DB using an added fixture for testing purposes
+```shell
+python manage.py loaddata train_station_data.json
+```
