@@ -136,7 +136,7 @@ class TripViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
 
         if self.action in ("list", "retrieve"):
-            queryset = queryset.select_related().prefetch_related("crew")
+            queryset = queryset.select_related().prefetch_related("crew").distinct()
 
         if self.action == "list":
             queryset = queryset.annotate(

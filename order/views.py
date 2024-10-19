@@ -11,7 +11,9 @@ from order.serializers import (
 
 @orders_viewset_schema
 class OrderViewSet(
-    viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin
 ):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -25,7 +27,7 @@ class OrderViewSet(
                 "tickets__trip__train",
                 "tickets__trip__route__source",
                 "tickets__trip__route__destination",
-            )
+            ).distinct()
 
         return queryset
 
