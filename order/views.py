@@ -20,7 +20,7 @@ class OrderViewSet(
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = Order.objects.filter(user=self.request.user)
+        queryset = super().get_queryset().filter(user=self.request.user)
 
         if self.action in ("list", "retrieve"):
             queryset = queryset.prefetch_related(

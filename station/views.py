@@ -47,7 +47,7 @@ class RouteViewSet(
     serializer_class = RouteSerializer
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
 
         if self.action in ("list", "retrieve"):
             queryset = queryset.select_related("source", "destination")
@@ -73,7 +73,7 @@ class TrainViewSet(
     serializer_class = TrainSerializer
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
 
         if self.action in ("list", "retrieve"):
             queryset = queryset.select_related("train_type")
@@ -133,7 +133,7 @@ class TripViewSet(viewsets.ModelViewSet):
     filterset_class = TripFilter
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = super().get_queryset()
 
         if self.action in ("list", "retrieve"):
             queryset = queryset.select_related().prefetch_related("crew").distinct()
