@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import SerializerMethodField, IntegerField
+from rest_framework.serializers import SerializerMethodField, IntegerField
 from rest_framework.relations import SlugRelatedField
 
 from order.models import Ticket

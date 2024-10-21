@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from order.models import Ticket, Order
-from station.serializers import TripTicketSerializer, TripDetailSerializer
+from station.serializers import TripTicketSerializer
 
 
 class TicketSerializer(serializers.ModelSerializer):
